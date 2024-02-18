@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "BT LIBRARY APP"
+rootProject.name = "WheresMyWater"
 include(":app")
  
