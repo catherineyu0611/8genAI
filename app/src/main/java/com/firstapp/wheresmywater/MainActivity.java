@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 public class MainActivity extends AppCompatActivity {
     ImageButton captureButton;
     private PreviewView previewView;
+CameraApp
     // Qualcomm HDK8450 has back cameras (despite facing forwards) so we initialize the back-facing lenses
     int cameraFacing = CameraSelector.LENS_FACING_BACK;
 
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         public void onActivityResult(Boolean result) {
             if (result) {
                 // camera starts with the back cameras
+MobileApp
                 startCamera(cameraFacing);
             }
         }
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+CameraApp
         // sets the layout of the application based on the activity_main.xml file
         setContentView(R.layout.activity_main);
 
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         captureButton = findViewById(R.id.captureButton);
 
         // starts camera only if the user gives permission to use the camera, otherwise nothing happens
+MobileApp
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             activityResultLauncher.launch(Manifest.permission.CAMERA);
         } else {
@@ -64,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+CameraApp
     // uses the CameraX API to set up and start the camera in the application
     public void startCamera(int cameraFacing) {
         // set aspect ratio
@@ -71,12 +76,14 @@ public class MainActivity extends AppCompatActivity {
         int aspectRatio = AspectRatio.RATIO_16_9;
 
         // event listener waits for user input, ie. waits for the user to click the button
+MobileApp
         ListenableFuture<ProcessCameraProvider> listenableFuture = ProcessCameraProvider.getInstance(this);
 
         listenableFuture.addListener(() -> {
             try {
                 ProcessCameraProvider cameraProvider = (ProcessCameraProvider) listenableFuture.get();
 
+CameraApp
                 // creates the camera preview with the 16:9 aspect ratio initialized above
                 Preview preview = new Preview.Builder().setTargetAspectRatio(aspectRatio).build();
 
@@ -89,10 +96,12 @@ public class MainActivity extends AppCompatActivity {
                         .requireLensFacing(cameraFacing).build();
 
                 // unbinds previous
+MobileApp
                 cameraProvider.unbindAll();
 
                 Camera camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture);
 
+CameraApp
                 // initializes click listener to detect user input when they click the button
                 captureButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -102,12 +111,15 @@ public class MainActivity extends AppCompatActivity {
                             activityResultLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
                         }
                         // takes a picture even if there is no permission to external storage, ie. it will not save to the user's device
+MobileApp
                         takePicture(imageCapture);
                     }
                 });
 
                 preview.setSurfaceProvider(previewView.getSurfaceProvider());
+CameraApp
             // handles potential exceptions
+MobileApp
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -115,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void takePicture(ImageCapture imageCapture) {
+CameraApp
         // initialize file object where the jpg image will be saved
         final File file = new File(getExternalFilesDir(null), System.currentTimeMillis() + ".jpg");
         // specifies where the image should be saved to
@@ -122,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
         imageCapture.takePicture(outputFileOptions, Executors.newCachedThreadPool(), new ImageCapture.OnImageSavedCallback() {
             @Override
             // runs when the image is saved successfully, ie. shows a success message at the bottom of the screen
+MobileApp
             public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
                 runOnUiThread(new Runnable() {
                     @Override
@@ -129,12 +143,16 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Image saved at: " + file.getPath(), Toast.LENGTH_SHORT).show();
                     }
                 });
+CameraApp
                 // "starts" the camera again
+MobileApp
                 startCamera(cameraFacing);
             }
 
             @Override
+CameraApp
             // runs when the image is not saved successfully, ie. shows an error message at the bottom of the screen
+MobileApp
             public void onError(@NonNull ImageCaptureException exception) {
                 runOnUiThread(new Runnable() {
                     @Override
@@ -142,12 +160,15 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Failed to save: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+CameraApp
                 // "starts" the camera again
+MobileApp
                 startCamera(cameraFacing);
             }
         });
     }
 
+CameraApp
     // determine aspectRatio based on width and height of the camera preview (not necessary for this application since it will always be fixed)
 //    private int aspectRatio(int width, int height) {
 //        double previewRatio = (double) Math.max(width, height) / Math.min(width, height);
@@ -156,4 +177,5 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //        return AspectRatio.RATIO_16_9;
 //    }
+MobileApp
 }
